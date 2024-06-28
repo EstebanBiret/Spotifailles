@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://code.jquery.com/jquery-3.3.1.js" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/c2c5240ae5.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  
+  <!-- Header -->
+  <div class="scroll-up-btn">
+    <img src="../../assets/angle-up-svgrepo-com.svg" alt="Back to profile" width="40px" height="20px">
+  </div>
+  
+  <nav class="navbar">
+    <div class="max-width">
+      <h1><span class="title1">SPOTI</span><span class="title2"><span title="Fish" id="fish" (click)="fish()">F</span>AILLES</span></h1>
+        <ul class="menu">
+          <li><a href="#home-section" class="menu-btn" [class.active]="currentSection === 'home-section'" (click)="onSectionClick('home-section')">Profil</a></li>
+            <li><a href="#artists-section" class="menu-btn" [class.active]="currentSection === 'artists-section'" (click)="onSectionClick('artists-section')">Top Artistes</a></li>
+          <li><a href="#tracks-section" class="menu-btn" [class.active]="currentSection === 'tracks-section'" (click)="onSectionClick('tracks-section')">Top Chansons</a></li>
+          <li><a href="#albums-section" class="menu-btn" [class.active]="currentSection === 'albums-section'" (click)="onSectionClick('albums-section')">Historique Albums</a></li>
+          <li><a href="#recent-tracks-section" class="menu-btn" [class.active]="currentSection === 'recent-tracks-section'" (click)="onSectionClick('recent-tracks-section')">Historique Chansons</a></li>
+          <li><a><img (click)="videToken()" id="logout" src="../../assets/on-off-svgrepo-com.svg" alt="Logout"></a></li>
+        </ul>
+        <div class="menu-btn">
+          <img id="menu-icon" src="../../assets/bars-s-svgrepo-com.svg" alt="Menu bars" width="50px">
+        </div>
+    </div>
+  </nav>
+
+  <div id="home-section">
+  
+    <div id="bla">
+      <div class="profile-container" *ngIf="actualUser">
+        <div class="profile-flex">
+          <div *ngIf="actualUser && actualUser['images'] && actualUser['images'].length > 1">
+            <img [src]="actualUser['images'][1]['url']" [alt]="actualUser['display_name']">
+          </div>
+          <div *ngIf="!actualUser['images'] || actualUser['images'].length <=0">
+            <img width="300px" src="https://i.makeagif.com/media/4-08-2016/yvjkxM.gif" alt="Filou">
+          </div>
+          <h1 (click)="userLinkProfile()" class="user-name">{{ actualUser['display_name'] }}</h1>
+          <div id="txt-container">
+            <p class="following" (click)="userLinkFollowing()">{{ following?.total }} artistes suivis</p>
+            <p>{{ totalAlbums }} albums</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+  <div class="section" id="artists-section">
+    <h1 id="h1-artistes" class="section-title">
+      <span class="title1">TOP</span><span class="title2">ARTISTES</span>
+    </h1>
+      
+    <select (change)="handleArtistLimitChange($event)" id="select-artists"> 
+      <option value="5">5</option>
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+    </select>
+
+    <div class="artists-container">
+      <div class="artist" *ngFor="let artist of artists; let i = index">
+        <img (click)="artistProfile(i)" [src]="artist['images'][1]['url']" [alt]="artist['name']">
+        <h2 class="artist-name" (click)="artistProfile(i)"> {{ i + 1 }}. {{ artist.name }} </h2>
+        <p>{{ artist.followers.total }} abonnés</p>
+        <p>{{ artist.genres.length ? capitalizeWords(artist.genres[0]) : 'Genre non défini' }}</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section" id="tracks-section">
+    <h1 id="h1-tracks" class="section-title">
+      <span class="title1">TOP</span><span class="title2">CHANSONS</span>
+    </h1>
+      
+    <select (change)="handleTrackLimitChange($event)" id="select-tracks"> 
+      <option value="5">5</option>
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+    </select>
+
+    <div class="tracks-container">
+      <div class="track" *ngFor="let track of tracks; let i = index">
+        <img (click)="trackProfile(i)" [src]="track['album']['images'][1]['url']" [alt]="track['name']">
+        <h2 class="track-name" (click)="trackProfile(i)"> {{ i + 1 }}. {{ track.name }} </h2>
+        <p>
+          <span class="track-name" (click)="artistTrackProfile(i, j)" *ngFor="let artist of track.artists; let j = index, let last = last">
+            {{ artist.name }}{{ last ? '' : ', ' }}
+          </span>
+        </p>
+    
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section" id="albums-section">
+    <h1 id="h1-albums" class="section-title">
+      <span class="title2">ALBUMS</span><span class="title1">RÉCEMMENT JOUÉS</span>
+    </h1>
+      
+    <select (change)="handleAlbumLimitChange($event)" id="select-albums"> 
+      <option value="5">5</option>
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+    </select>
+
+    <div class="albums-container">
+      <div class="album" *ngFor="let album of albums; let i = index">
+        <img (click)="albumProfile(i)" [src]="album['album']['images'][1]['url']" [alt]="album['album']['name']">
+        <h2 class="album-name" (click)="albumProfile(i)"> {{ i + 1 }}. {{ album.album.name }} </h2>
+        <p>
+          <span class="album-name" (click)="artistAlbumProfile(i, j)" *ngFor="let artist of album.album.artists; let j = index, let last = last">
+            {{ artist.name }}{{ last ? '' : ', ' }}
+          </span>
+        </p>
+        <p>Ajouté le {{ formatDate(album.added_at) }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="recent-tracks-section">
+    <h1 id="h1-recent-tracks" class="section-title">
+      <span class="title2">CHANSONS</span><span class="title1">RÉCEMMENT JOUÉES</span>
+    </h1> 
+      
+    <select (change)="handleRecentTracksLimitChange($event)" id="select-recent-tracks"> 
+      <option value="5">5</option>
+      <option value="10">10</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+    </select>
+
+    <div class="recent-tracks-container">
+      <div class="recent-track" *ngFor="let recent_track of recent_tracks; let i = index">
+        <img (click)="recentTrackProfile(i)" [src]="recent_track['track']['album']['images'][1]['url']" [alt]="recent_track['track']['name']">
+        <h2 class="recent-track-name" (click)="recentTrackProfile(i)"> {{ i + 1 }}. {{ recent_track.track.name }} </h2>
+        <p>
+          <span class="album-name" (click)="recentTrackProfileArtistProfile(i, j)" *ngFor="let artist of recent_track.track.artists; let j = index, let last = last">
+            {{ artist.name }}{{ last ? '' : ', ' }}
+          </span>
+        </p>
+        <p>Écoutée le {{ formatDateTime(recent_track.played_at) }}</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script src="script.js"></script>
+</html>
+
+
+  

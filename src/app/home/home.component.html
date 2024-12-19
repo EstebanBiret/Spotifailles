@@ -37,7 +37,7 @@
       <div class="profile-container" *ngIf="actualUser">
         <div class="profile-flex">
           <div *ngIf="actualUser && actualUser['images'] && actualUser['images'].length > 1">
-            <img [src]="actualUser['images'][1]['url']" [alt]="actualUser['display_name']">
+            <img [src]="actualUser['images'][0]['url']" [alt]="actualUser['display_name']">
           </div>
           <div *ngIf="!actualUser['images'] || actualUser['images'].length <=0">
             <img width="300px" src="https://i.makeagif.com/media/4-08-2016/yvjkxM.gif" alt="Filou">

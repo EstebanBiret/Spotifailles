@@ -45,7 +45,7 @@ export class HomeComponent implements OnInit {
 
   @HostListener('window:scroll', ['$event'])
   onScroll() {
-    const sections = document.querySelectorAll('div[id$="-section"]'); // Select divs with IDs ending in "-section"
+    const sections = document.querySelectorAll('div[id$="-section"]');
     const scrollPos = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
 
     sections.forEach(section => {
